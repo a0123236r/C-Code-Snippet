@@ -1,0 +1,125 @@
+:::Please use C# to write your answer
+
+1.Write a function to remove duplicate characters from String? (do not use LINQ distinct function, write your own function)
+Code:
+        private string RemoveDuplicateChars(string input)
+        {
+            string output = "";
+            foreach (char c in input)
+            {
+                if (!output.Contains(c)) output += c;
+            }
+            return output;
+        }
+
+
+2.Write a function to read file asynchronously.
+Code:
+
+        static async System.Threading.Tasks.Task Main(string[] args)
+        {
+            string filepath =@"C:\temp\code.txt";
+            using (var reader = File.OpenText(filepath))
+            {
+                var fileText = await reader.ReadToEndAsync();
+                Console.WriteLine(fileText);
+            }
+        }
+
+3. Create 5 workers concurrent print out numbers from 1 to 1000. Note: for the whole result each number only can display once only.
+Example output format:
+{"Worker":{"WorkerID":1, "Number":1}}
+{"Worker":{"WorkerID":2, "Number":3}}
+{"Worker":{"WorkerID":3, "Number":2}}
+{"Worker":{"WorkerID":4, "Number":4}}
+{"Worker":{"WorkerID":5, "Number":5}}
+.....
+{"Worker":{"WorkerID":5, "Number":1000}}
+
+====================================
+Code:
+    
+    private void PrintNumber()
+        {
+            int[] workIDs = new int[] { 1, 2, 3, 4, 5 };
+            for (int i = 1; i <= 1000; i++)
+            {
+                Console.WriteLine("{\"Worker\":{\"WorkerID\":" + workIDs[(i-1) % 5] + ", \"Number\":" + i + "}}");
+            }
+        }
+
+
+4.Write a function to split big text file to small one(10mb)
+
+Code:
+
+        private void SplitBigFile()
+        {
+            int size = 10000000;    //10 mb to 10,000,000 bytes
+            string filepath = @"C:\temp\bigfile.txt";
+            long length = new System.IO.FileInfo(filepath).Length;
+            StreamReader sr = new StreamReader(filepath);
+            double qty = length / size + 1;
+
+            for (int chunk = 1; chunk <= qty; chunk++)
+            {
+                char[] chars = new char[size];
+                sr.Read(chars, 0, size);
+                StreamWriter sw = File.CreateText(@"C:\temp\file " + chunk + ".txt");
+                sw.WriteLine(chars);
+                sw.Flush();
+            }
+        }
+
+
+5.Base on Member class, Generate 1000 member with different member info
+Class Member
+{
+ int Id {get;set;} ///uniqure
+ string Birthday {get;set;}
+ string Address {get;set;}
+ string Sex {get;set;}
+}
+
+
+Code:
+
+        private static List<Member> GenerateMemberInfo()
+        {
+            //for birthday
+            DateTime dateFrom = new DateTime(1955, 1, 1);
+            DateTime dateTo = new DateTime(2010, 1, 1);
+            int daysRange = dateTo.Subtract(dateFrom).Days;
+
+            //for address
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            string addr = "";
+
+            //for sex
+            string[] sex = new string[] { "Male", "Female" };
+
+            List<Member> members = new List<Member>();
+
+            for (int i = 1; i <= 1000; i++)
+            {
+
+                Member member = new Member();
+                member.Id = i;
+
+                Random rand = new Random();
+
+                DateTime newDate = dateFrom.AddDays(rand.Next(daysRange));
+                member.Birthday = newDate.ToString();
+
+                for (int j = 0; j < 10; j++)
+                {
+                    addr += chars[rand.Next(chars.Length)];
+                }
+                member.Address = addr;
+
+                member.Sex = sex[rand.Next(0, 2)];
+                members.Add(member);
+            }
+
+            return members;
+        }
